@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TextScanner</string>
+    <string name="hello_message">Capture or choose an image</string>
+    <string name="button_capture_text">Capture</string>
+    <string name="button_gallery_text">Gallery</string>
+    <string name="button_copy_text">Copy Text</string>
+
+</resources>
