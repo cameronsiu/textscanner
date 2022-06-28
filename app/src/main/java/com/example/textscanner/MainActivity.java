@@ -80,6 +80,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    ActivityResultLauncher<String> getImage = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
+        @Override
+        public void onActivityResult(Uri image) {
+            CropImage.activity(image).start(MainActivity.this);
+        }
+    });
+
+    // TODO: Change appearance/look of main page
+    // TODO: Make image taken from camera temporary
+    // TODO: Allow user to edit the text
+    // -- look into fragments in MyFirstApp, it seems that we may need to use navigation in order to go from activity to a different fragment since a scrollview can only have one child
+    /*
+
+     <EditText
+            android:visibility="gone"
+            android:id="@+id/text_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"></EditText>
+     Will not work inside scroll view with
+     */
+    // TODO: Change so that it only opens gallery when clicking gallery button
+    // TODO: Add Light/Dark modes
+    // TODO: create app icon
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,13 +113,14 @@ public class MainActivity extends AppCompatActivity {
         button_gallery = findViewById(R.id.button_gallery);
         button_copy = findViewById(R.id.button_copy);
         textview_data = findViewById(R.id.text_data);
-
+        /*
         // using the app for the first time
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                     Manifest.permission.CAMERA
             }, REQUEST_CAMERA_CODE);
         }
+         */
 
         button_capture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,9 +139,7 @@ public class MainActivity extends AppCompatActivity {
         button_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CropImage.activity()
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .start(MainActivity.this);
+                getImage.launch("image/*");
 
             }
         });
