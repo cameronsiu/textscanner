@@ -91,8 +91,9 @@ public class MainActivity extends AppCompatActivity {
     // TODO: Make image taken from camera temporary
     // TODO: Allow user to edit the text
     // -- look into fragments in MyFirstApp, it seems that we may need to use navigation in order to go from activity to a different fragment since a scrollview can only have one child
+    // -- after looking into fragments, we can easily do this by making another activity instead of having two fragments and 1 activity.
+    // -- so create another activity (2 in total now), then after the activity result, switch to the other activity which has more buttons etc.
     /*
-
      <EditText
             android:visibility="gone"
             android:id="@+id/text_box"
@@ -132,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cam_uri);
                 startCamera.launch(cameraIntent);
-
+                // TODO: Add this
+                // startActivity(Display text in textbox)
             }
         });
 
@@ -140,10 +142,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getImage.launch("image/*");
-
+                // TODO: Add this
+                // startActivity(Display text in textbox)
             }
         });
 
+        // TODO: Remove this and put it in the other activity
         button_copy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
                                 });
+
     }
 
     private void copyToClipBoard(String text) {
