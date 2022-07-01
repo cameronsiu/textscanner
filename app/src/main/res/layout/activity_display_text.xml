@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".DisplayTextActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -15,12 +15,12 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp">
-        <TextView
-            android:id="@+id/text_data"
+
+        <EditText
+            android:id="@+id/edittext_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hello_message"
-            android:textSize="22sp"/>
+            android:textSize="22sp" />
     </ScrollView>
     <LinearLayout
         android:id="@+id/linear_holder"
@@ -45,6 +45,15 @@
             android:layout_margin="8dp"
             android:onClick="launchGallery">
         </Button>
-
+        <Button
+            android:id="@+id/button_copy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_copy_text"
+            android:layout_margin="8dp"
+            android:onClick="copyToClipBoard">
+        </Button>
     </LinearLayout>
+
 </RelativeLayout>

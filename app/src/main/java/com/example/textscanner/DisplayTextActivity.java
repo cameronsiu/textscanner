@@ -3,38 +3,20 @@ package com.example.textscanner;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.ActivityResultRegistry;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
-import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,25 +32,16 @@ import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class DisplayTextActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MESSAGE = "com.example.textscanner.MESSAGE";
     Button button_capture, button_gallery, button_copy;
-    TextView textview_data;
     Bitmap bitmap;
     private static final int REQUEST_CAMERA_CODE = 100;
     private Uri cam_uri;
-
+    EditText editText_data;
 
     ActivityResultLauncher<Intent> startCamera = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -77,56 +50,34 @@ public class MainActivity extends AppCompatActivity {
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == RESULT_OK) {
                         // There are no request codes
-                        CropImage.activity(cam_uri).start(MainActivity.this);
+                        CropImage.activity(cam_uri).start(DisplayTextActivity.this);
 
                     }
                 }
             });
-
     ActivityResultLauncher<String> getImage = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
         @Override
         public void onActivityResult(Uri image) {
-            CropImage.activity(image).start(MainActivity.this);
+            CropImage.activity(image).start(DisplayTextActivity.this);
         }
     });
 
-    // TODO: Change appearance/look of main page
-    // TODO: Make image taken from camera temporary
-    // TODO: Allow user to edit the text
-    // -- look into fragments in MyFirstApp, it seems that we may need to use navigation in order to go from activity to a different fragment since a scrollview can only have one child
-    // -- after looking into fragments, we can easily do this by making another activity instead of having two fragments and 1 activity.
-    // -- so create another activity (2 in total now), then after the activity result, switch to the other activity which has more buttons etc.
-    /*
-     <EditText
-            android:visibility="gone"
-            android:id="@+id/text_box"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="22sp"></EditText>
-     Will not work inside scroll view with
-     */
-    // TODO: Change so that it only opens gallery when clicking gallery button
-    // TODO: Add Light/Dark modes
-    // TODO: create app icon
-    // TODO: look into fragments
-    // - when in the DisplayTextActivity, clicking the back nav button will go to the previous activity.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_display_text);
 
         button_capture = findViewById(R.id.button_capture);
         button_gallery = findViewById(R.id.button_gallery);
 
-        textview_data = findViewById(R.id.text_data);
-        /*
-        // using the app for the first time
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
-                    Manifest.permission.CAMERA
-            }, REQUEST_CAMERA_CODE);
-        }
-         */
+        editText_data = findViewById(R.id.edittext_data);
+        button_copy = findViewById(R.id.button_copy);
+
+        // Get intent that started this activity and extract the message string
+        Intent intent = getIntent();
+        String text = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+
+        editText_data.setText(text);
 
 
     }
@@ -144,6 +95,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchGallery(View v) {
         getImage.launch("image/*");
+    }
+
+    public void copyToClipBoard(View v) {
+        String scanned_text = editText_data.getText().toString();
+        ClipboardManager clipBoard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Copied data", scanned_text);
+        clipBoard.setPrimaryClip(clip);
+        Toast.makeText(DisplayTextActivity.this, "Copied to clipboard!", Toast.LENGTH_SHORT);
     }
 
     // using the crop image api
@@ -185,10 +144,7 @@ public class MainActivity extends AppCompatActivity {
                                     stringBuilder.append(blockText);
                                     stringBuilder.append("\n");
                                 }
-                                Intent intent = new Intent(MainActivity.this, DisplayTextActivity.class);
-                                String text = stringBuilder.toString();
-                                intent.putExtra(EXTRA_MESSAGE, text);
-                                startActivity(intent);
+                                editText_data.setText(stringBuilder.toString());
                             }
                         })
                         .addOnFailureListener(
@@ -201,8 +157,4 @@ public class MainActivity extends AppCompatActivity {
                                 });
 
     }
-
-
-
-
 }
