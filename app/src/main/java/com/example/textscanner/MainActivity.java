@@ -63,12 +63,13 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "com.example.textscanner.MESSAGE";
-    Button button_capture, button_gallery, button_copy;
+    Button button_capture, button_gallery;
     TextView textview_data;
     Bitmap bitmap;
     private static final int REQUEST_CAMERA_CODE = 100;
-    private Uri cam_uri;
+    String currentPhotoPath;
 
+    private Uri tempURI;
 
     ActivityResultLauncher<Intent> startCamera = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == RESULT_OK) {
                         // There are no request codes
-                        CropImage.activity(cam_uri).start(MainActivity.this);
+                        CropImage.activity(tempURI).start(MainActivity.this);
 
                     }
                 }
@@ -91,8 +92,6 @@ public class MainActivity extends AppCompatActivity {
     });
 
     // TODO: Change appearance/look of main page
-    // TODO: Make image taken from camera temporary
-    // TODO: Allow user to edit the text
     // -- look into fragments in MyFirstApp, it seems that we may need to use navigation in order to go from activity to a different fragment since a scrollview can only have one child
     // -- after looking into fragments, we can easily do this by making another activity instead of having two fragments and 1 activity.
     // -- so create another activity (2 in total now), then after the activity result, switch to the other activity which has more buttons etc.
@@ -105,9 +104,7 @@ public class MainActivity extends AppCompatActivity {
             android:textSize="22sp"></EditText>
      Will not work inside scroll view with
      */
-    // TODO: Change so that it only opens gallery when clicking gallery button
     // TODO: Add Light/Dark modes
-    // TODO: create app icon
     // TODO: look into fragments
     // - when in the DisplayTextActivity, clicking the back nav button will go to the previous activity.
     @Override
@@ -131,16 +128,53 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+//    // Captures an image and creates one too (fix it by creating a temp image)
+//    public void captureImage(View v) {
+//        ContentValues values = new ContentValues();
+//        values.put(MediaStore.Images.Media.TITLE, "New Picture");
+//        values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
+//        cam_uri = getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+//        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cam_uri);
+//        startCamera.launch(cameraIntent);
+//    }
+
     // Captures an image and creates one too (fix it by creating a temp image)
     public void captureImage(View v) {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "New Picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
-        cam_uri = getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cam_uri);
-        startCamera.launch(cameraIntent);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            File tempImage = null;
+            try {
+                tempImage = createTempImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (tempImage != null) {
+                tempURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", tempImage);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempURI);
+                startCamera.launch(cameraIntent);
+            } else {
+                System.out.println("Temporary image failed to create");
+            }
+        }
     }
+
+    private File createTempImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
 
     public void launchGallery(View v) {
         getImage.launch("image/*");
