@@ -15,9 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TextScanner">
         <activity
-            android:name=".DisplayTextActivity"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
