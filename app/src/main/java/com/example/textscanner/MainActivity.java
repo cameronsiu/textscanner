@@ -74,7 +74,9 @@ public class MainActivity extends AppCompatActivity {
     ActivityResultLauncher<String> getImage = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
         @Override
         public void onActivityResult(Uri image) {
-            CropImage.activity(image).start(MainActivity.this);
+            if (image != null) {
+                CropImage.activity(image).start(MainActivity.this);
+            }
         }
     });
 
@@ -86,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         // There are no request codes
                         CropImage.activity(tempURI).start(MainActivity.this);
-
 
                     }
                 }

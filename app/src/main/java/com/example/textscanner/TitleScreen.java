@@ -48,7 +48,6 @@ public class TitleScreen extends Fragment {
     Button button_capture, button_gallery;
     View view;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,45 +57,5 @@ public class TitleScreen extends Fragment {
         button_gallery = (Button) view.findViewById(R.id.button_gallery);
         return view;
     }
-
-//    private File createTempImageFile() throws IOException {
-//        // Create an image file name
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        String imageFileName = "JPEG_" + timeStamp + "_";
-//        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//        File image = File.createTempFile(
-//                imageFileName,  /* prefix */
-//                ".jpg",         /* suffix */
-//                storageDir      /* directory */
-//        );
-//
-//        // Save a file: path for use with ACTION_VIEW intents
-//        currentPhotoPath = image.getAbsolutePath();
-//        return image;
-//    }
-//
-//    // Captures an image and creates one too (fix it by creating a temp image)
-//    public void captureImage(View v) {
-//        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-//            File tempImage = null;
-//            try {
-//                tempImage = createTempImageFile();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            if (tempImage != null) {
-//                tempURI = FileProvider.getUriForFile(getActivity(), "com.example.android.fileprovider", tempImage);
-//                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempURI);
-//                startCamera.launch(cameraIntent);
-//            } else {
-//                System.out.println("Temporary image failed to create");
-//            }
-//        }
-//    }
-
-//    public void launchGallery(View v) {
-//        getImage.launch("image/*");
-//    }
 
 }

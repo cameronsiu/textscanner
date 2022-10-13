@@ -20,7 +20,7 @@ import android.widget.Toast;
  * Use the {@link DisplayText#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DisplayText extends Fragment implements View.OnClickListener {
+public class DisplayText extends Fragment {
 
     private static final String TEXT = "scanned_text";
     View view;
@@ -35,12 +35,6 @@ public class DisplayText extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//
-//    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,7 +43,7 @@ public class DisplayText extends Fragment implements View.OnClickListener {
         button_capture = (Button) view.findViewById(R.id.button_capture);
         button_gallery = (Button) view.findViewById(R.id.button_gallery);
         button_copy = (Button) view.findViewById(R.id.button_copy);
-        button_copy.setOnClickListener(this);
+        button_copy.setOnClickListener(this::copyToClipBoard);
         editText_data = (EditText) view.findViewById(R.id.edittext_data);
         if (getArguments() != null) {
             editText_data.setText(getArguments().getString(TEXT));
@@ -57,20 +51,11 @@ public class DisplayText extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.button_copy:
-                copyToClipBoard();
-                break;
-        }
-    }
-
-    public void copyToClipBoard() {
+    public void copyToClipBoard(View view) {
         String scanned_text = editText_data.getText().toString();
         ClipboardManager clipBoard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Copied data", scanned_text);
         clipBoard.setPrimaryClip(clip);
-        Toast.makeText(getActivity(), "Copied to clipboard!", Toast.LENGTH_SHORT);
+        Toast.makeText(getActivity(), "Copied to clipboard!", Toast.LENGTH_SHORT).show();
     }
 }
