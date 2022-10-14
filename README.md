@@ -1,3 +1,8 @@
 # textscanner
 
-This app scans the text of a picture and can copy the text.
+An Android app that scans the text of an image. The text is then returned into a textbox so that the user can make modifications or copy the text.
+
+APIs used:
+
+- Google's ML Vision API
+- Android-Image-Cropper API
