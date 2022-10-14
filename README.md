@@ -4,5 +4,5 @@ An Android app that scans the text of an image. The text is then returned into a
 
 APIs used:
 
-- Google's ML Vision API
-- Android-Image-Cropper API
+- Google's ML Vision 
+- Android-Image-Cropper
